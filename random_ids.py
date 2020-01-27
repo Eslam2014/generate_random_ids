@@ -47,7 +47,7 @@ class RandomIdsGenerator:
 
     def get_unique_ids(self):
         """
-        :return: list of the unique ids it randomize from
+        :return: list of unique ids it randomize from
         """
         unique_ids = []
         for i in range(self.__start_num, self.__end_num + 1):
