@@ -1,5 +1,11 @@
 import hashlib
 import random
+import numpy as np
+
+
+def hash_int(int_num):
+    hashed_num = hashlib.md5(str(int_num).encode())
+    return hashed_num.hexdigest()
 
 
 class RandomIdsGenerator:
@@ -10,6 +16,7 @@ class RandomIdsGenerator:
      and convert it to hexdigest
     """
     __slots__ = ['__n_unique_id', '__start_num', '__end_num']
+    MAX_RANGE = 1000000
 
     def __init__(self, n_unique_id: int, start_seed: int = None):
         """
@@ -22,7 +29,7 @@ class RandomIdsGenerator:
         self.__n_unique_id = n_unique_id
         self.__start_num = start_seed
         if not self.__start_num:
-            self.__start_num = random.randrange(1000000)
+            self.__start_num = random.randrange(RandomIdsGenerator.MAX_RANGE)
         self.__end_num = self.__start_num + n_unique_id - 1
 
     def random(self):
@@ -31,8 +38,7 @@ class RandomIdsGenerator:
         :return: random id
         """
         random_num = random.randrange(self.__start_num, self.__end_num)
-        hashed_num = hashlib.md5(str(random_num).encode())
-        return hashed_num.hexdigest()
+        return hash_int(random_num)
 
     def randoms(self, n_ids: int):
         """
@@ -40,10 +46,9 @@ class RandomIdsGenerator:
         :param n_ids: number of id you need to generate
         :return: list of random ids it might contains duplications
         """
-        random_ids = []
-        for i in range(0, n_ids):
-            random_ids.append(self.random())
-        return random_ids
+        random_numbers = np.random.randint(low=self.__start_num, high=self.__end_num, size=n_ids)
+        v_hash_func = np.vectorize(hash_int)
+        return v_hash_func(random_numbers)
 
     def get_unique_ids(self):
         """
